@@ -23,7 +23,6 @@ $ php -m | grep Xdebug
 
 ###2.1.2 php中配置xdebug
 vim /etc/php.ini
-```
 [xdebug]
 zend_extension="/usr/local/php5/lib/php/extensions/no-debug-non-zts-20121212/xdebug.so"
 xdebur.cli_color=1
@@ -41,7 +40,6 @@ xdebug.max_nesting_level = 10000
 xdebug.dump_globals= on
 xdebug.show_local_vars=on
 xdebug.collect_params=2
-```
 
 ###2.1.3 创建xdebug输出目录
 
