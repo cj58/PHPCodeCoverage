@@ -263,7 +263,7 @@ class IndexController
         $title = $pccFile;
         echo "<html><head><title>{$title}</title></head><body>";
 
-        echo "project:{$pcc->project}<br/>";
+        echo "     project : {$pcc->project}<br/>";
         $startTime = $this->_microtimeFormat($pcc->startTime);
         echo "startTime:{$startTime}<br/>";
         $endTime = $this->_microtimeFormat($pcc->endTime);
@@ -408,9 +408,13 @@ class IndexController
                 <head>
                   <title>'.$title.'</title>
                    <meta http-equiv=Content-Type content="text/html;charset=gb2312">
+                   <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">  
+                   <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+                   <script >hljs.initHighlightingOnLoad();</script>
                 </head>
                 <body>';
-
+        echo ' <pre>
+                        <code class="php">';
         $rowNumLen = strlen(count($lines));
         foreach($lines as $line)
         {
@@ -419,15 +423,15 @@ class IndexController
             $html = sprintf("%{$rowNumLen}d%s%s",$line['rowNum'],' ',$str);
             $html = mb_convert_encoding($html, "GBK", "auto");
             $html = htmlspecialchars($html,ENT_COMPAT,'GB2312');
-            $html = str_replace(' ','&nbsp',$html);
-            $html = str_replace("\t",'&nbsp&nbsp&nbsp&nbsp',$html);
             if($line['isCoverage'])
             {
                 $html = '<font style="background:green" bgcolor="green">'.$html."</font>";
             }
 
-            echo $html.'<br/>';
+            echo $html;
         }
+        echo ' </code>
+                    </pre>';
         echo '</body></html>';
     }/*}}}*/
 
