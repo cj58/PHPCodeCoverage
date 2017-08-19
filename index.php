@@ -404,7 +404,12 @@ class IndexController
         }
 
         $title = basename($response['data']['phpFile']);
-        echo "<html><head><title>{$title}</title></head><body>";
+        echo '<html>
+                <head>
+                  <title>'.$title.'</title>
+                   <meta http-equiv=Content-Type content="text/html;charset=gb2312">
+                </head>
+                <body>';
 
         $rowNumLen = strlen(count($lines));
         foreach($lines as $line)
@@ -412,7 +417,8 @@ class IndexController
             $str = $line['line'];
 
             $html = sprintf("%{$rowNumLen}d%s%s",$line['rowNum'],' ',$str);
-            $html = htmlspecialchars($html);
+            $html = mb_convert_encoding($html, "GBK", "auto");
+            $html = htmlspecialchars($html,ENT_COMPAT,'GB2312');
             $html = str_replace(' ','&nbsp',$html);
             $html = str_replace("\t",'&nbsp&nbsp&nbsp&nbsp',$html);
             if($line['isCoverage'])
