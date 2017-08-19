@@ -49,3 +49,68 @@ vim /etc/php.ini
 # mkdir /tmp/xdebug
 # chmod -R 777 /tmp/xdebug
 ```
+## 2.2 安装PHPCodeCoverage
+```
+#创建PHPCodeCoverage项目目录
+# mkdir -p /home/dev/svn/avatar/PHPCodeCoverage
+
+#下载源码 
+# wget https://github.com/cj58/PHPCodeCoverage/archive/master.zip
+
+#解压
+# unzip master.zip
+
+#将代码拷贝到项目目录
+# cp PHPCodeCoverage-master/* /home/dev/svn/avatar/PHPCodeCoverage -r
+```
+# 3 配置
+配置PHPCodeCoverage的数据目录，默认是./data目录。也可以建立/tmp/pcc/data。主要是为了确保后面web用户能够对data目录有操作权限。
+```
+# mkdir -p /home/dev/svn/avatar/PHPCodeCoverage/data
+# chmod -R 777 /home/dev/svn/avatar/PHPCodeCoverage/data
+```
+修改配置目录
+vim config.php
+```php
+<?php
+/*
+ * this file is config for PHPCodeCoverage
+ *
+ * @link https://github.com/cj58/PHPCodeCoverage
+ * @author cj
+ * @copyright 2017 cj
+ *
+ */
+
+$configs = array();
+
+//data dir for pcc
+//$configs['dataDir'] = '/tmp/pcc/data';
+$configs['dataDir'] = dirname(__FILE__).'/data';
+```
+# 4 使用
+vim test.php
+```php
+<?php
+include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+$p = new Pcc('testProject');
+$p->start();
+
+//..... you want Coverage Code,start
+$a = 1;
+if($a)
+{
+    $out = 'a = 1';
+}
+else
+{
+    $out = 'a <> 1';
+}
+//....you want Coverage Code,end
+//....
+
+$p->stop();
+
+?>
+```
+`$ php test.php`
