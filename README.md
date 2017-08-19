@@ -124,25 +124,57 @@ $p->stop();
 ```
 $ php index.php
 ```
-![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_data_list.png)
+![cli_data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_data_list.png)
 
 ### 5.1.2 查看pcc数据详情
 执行如下命令。-a表示要请求的动作。-c表示要请求的pcc数据文件。
 ```
 $ php index.php -a dataInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc
 ```
-![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_pcc_datainfo.png)
+![cli_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_pcc_datainfo.png)
 
 ### 5.1.3 查看php文件代码覆盖情况
 执行如下命令。-p 表示要查看代码覆盖情况的php文件。行号后面带有+表示，该行代码被覆盖。
 ```
  $ php index.php -a fileInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc -p /home/dev/svn/avatar/PHPCodeCoverage/test.php
 ```
-![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_php_info.png)
+![cli_php_info](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_php_info.png)
 
 ### 5.1.4 查看命令行模式帮助文件
 执行如下命令，可以查看命令行模式下的帮助信息
 ```
 $ php index.php -a help
 ```
-![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_help.png)
+![cli_help](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_help.png)
+
+## 5.2 Web展示
+### 5.2.1 配置web-service
+在nginx.conf加入以下配置信息。
+vim /Data/apps/nginx/conf/nginx-web.conf 
+```
+ server {
+      listen       80;
+      server_name  dev.pcc.net;
+      root    /home/dev/svn/avatar/PHPCodeCoverage;
+      index  index.html index.htm index.php;
+      location ~ \.php$ {
+          include fastcgi_params;
+          fastcgi_pass 127.0.0.1:9000;
+          #fastcgi_param SCRIPT_FILENAME  $documentroot$fastcgi_script_name;
+          fastcgi_index index.php;
+          include fastcgi.conf;
+      }
+ }
+```
+重启nginx服务。并将将dev.pcc.net的host信息指向你项目所在代码的服务器ip。
+### 5.2.2 查看pcc数据列表
+在浏览器中输入，http://dev.pcc.net，即可查看pcc数据列表信息。
+![web_data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_data_list.png)
+
+### 5.2.3 查看pcc数据详情
+点击某一个.pcc文件，即可查看详情。
+![web_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo.png)
+
+### 5.1.3 查看php文件代码覆盖情况
+点击某一个.php文件，即可查看代码覆盖情况。背景行是绿色的表示被覆盖。
+![web_php_info](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_php_info.png)
