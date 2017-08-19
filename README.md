@@ -9,7 +9,7 @@ PHPCodeCoverage是一个基于xdebug检测php代码覆盖的工具，它能够�
 $ php -m | grep Xdebug
 ```
 
-###2.1.2 安装xdebug
+### 2.1.2 安装xdebug
 
 ```Bash
 # wget http://www.xdebug.org/files/xdebug-2.2.5.tgz
@@ -21,7 +21,7 @@ $ php -m | grep Xdebug
 # make install
 ```
 
-###2.1.2 php中配置xdebug
+### 2.1.2 php中配置xdebug
 vim /etc/php.ini
 [xdebug]
 zend_extension="/usr/local/php5/lib/php/extensions/no-debug-non-zts-20121212/xdebug.so"
@@ -41,7 +41,7 @@ xdebug.dump_globals= on
 xdebug.show_local_vars=on
 xdebug.collect_params=2
 
-###2.1.3 创建xdebug输出目录
+### 2.1.3 创建xdebug输出目录
 
 ```Bash
 # mkdir /tmp/xdebug
