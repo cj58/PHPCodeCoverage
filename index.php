@@ -226,7 +226,7 @@ class IndexController
         $str = fread($fp,filesize($pccFile));
         fclose($fp);
         include_once(dirname(__FILE__)."/Pcc.php");
-        $pcc =  @igbinary_unserialize($str);
+        $pcc =  unserialize($str);
         if(false == $pcc instanceof Pcc)
         {
             $res['errorMsg'] = "{$pccFile} content is not class of Pcc";
