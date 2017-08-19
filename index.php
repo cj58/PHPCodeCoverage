@@ -262,24 +262,27 @@ class IndexController
 
         $title = $pccFile;
         echo "<html><head><title>{$title}</title></head><body>";
-
-        echo "     project : {$pcc->project}<br/>";
+        
+        echo "<table align='center'>";
+        echo "<tr><td align='right'>Project : </td><td>{$pcc->project}</td>";
         $startTime = $this->_microtimeFormat($pcc->startTime);
-        echo "startTime:{$startTime}<br/>";
+        echo "<tr><td align='right'>StartTime : </td><td>{$startTime}</td>";
         $endTime = $this->_microtimeFormat($pcc->endTime);
-        echo "endTime:{$endTime}<br/>";
+        echo "<tr><td align='right'>EndTime : </td><td>{$endTime}</td>";
         $consumeTime = number_format($pcc->consumeTime, 6, '.', '');
-        echo "consumeTime:{$consumeTime}<br/>";
-        echo "<br/>";
-
+        echo "<tr><td align='right'>ConsumeTime : </td><td>{$consumeTime}</td>";
+        echo "</table>";
+        echo "<hr>";
+        echo "<ul>";
         foreach($rows as $key => $row)
         {
             $count = count($row);
             $html = '<a href=index.php?action=fileInfo&pccFile='.$pccFile.'&phpFile=';
             $html .= $key.'>'.$key.'</a>';
             $html .= " ${count}<br/>";
-            echo $html;
+            echo "<li>".$html."</li>";
         }
+        echo "</ul>";
         echo '</body></html>';
     }/*}}}*/
 
