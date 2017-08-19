@@ -168,7 +168,7 @@ vim /Data/apps/nginx/conf/nginx-web.conf
 ```
 重启nginx服务。并将将dev.pcc.net的host信息指向你项目所在代码的服务器ip。
 ### 5.2.2 查看pcc数据列表
-在浏览器中输入，http://dev.pcc.net，即可查看pcc数据列表信息。
+在浏览器中输入，http://dev.pcc.net  。即可查看pcc数据列表信息。
 ![web_data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_data_list.png)
 
 ### 5.2.3 查看pcc数据详情
