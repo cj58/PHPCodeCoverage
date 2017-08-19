@@ -113,5 +113,36 @@ $p->stop();
 
 ?>
 ```
-`$ php test.php`
+`$ php test.php` 
+每次执行test.php文件，都会在data目录下面生成一个.pcc数据文件。这个文件保存了代码覆盖的全部数据。
 ![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/data_list.png)
+
+# 5 展示
+## 5.1 命令行展示
+### 5.1.1 查看pcc数据列表
+执行如下命令，会安装时间倒序展示data目录中的所有.pcc文件。
+```
+$ php index.php
+```
+![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_data_list.png)
+
+### 5.1.2 查看pcc数据详情
+执行如下命令。-a表示要请求的动作。-c表示要请求的pcc数据文件。
+```
+$ php index.php -a dataInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc
+```
+![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_pcc_datainfo.png)
+
+### 5.1.3 查看php文件代码覆盖情况
+执行如下命令。-p 表示要查看代码覆盖情况的php文件。行号后面带有+表示，该行代码被覆盖。
+```
+ $ php index.php -a fileInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc -p /home/dev/svn/avatar/PHPCodeCoverage/test.php
+```
+![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_php_info.png)
+
+### 5.1.4 查看命令行模式帮助文件
+执行如下命令，可以查看命令行模式下的帮助信息
+```
+$ php index.php -a help
+```
+![data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_help.png)
