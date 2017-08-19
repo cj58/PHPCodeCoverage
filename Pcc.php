@@ -64,7 +64,7 @@ class Pcc
 
         $key = md5($this->project.$this->startTime.$this->endTime.$this->consumeTime);
         $pccFile = $this->project.'.'.$key.'.pcc'; 
-        error_log(@igbinary_serialize($this),3,$this->dataDir.'/'.$pccFile);
+        error_log(serialize($this),3,$this->dataDir.'/'.$pccFile);
     }/*}}}*/
 
     public function addNeedFiles(array $files)
