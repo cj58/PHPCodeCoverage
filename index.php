@@ -411,6 +411,7 @@ class IndexController
                 <head>
                   <title>'.$title.'</title>
                    <meta http-equiv=Content-Type content="text/html;charset=gb2312">
+                   <meta name="renderer" content="webkit">
                    <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">  
                    <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
                    <script >hljs.initHighlightingOnLoad();</script>
