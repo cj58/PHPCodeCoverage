@@ -50,12 +50,20 @@ class Pcc
         $datas = xdebug_get_code_coverage();
         xdebug_stop_code_coverage();
 
-        $this->_writeData($datas);
+        $this->datas = $this->_choiceFile($datas);
+
+        $this->_writeData();
     }/*}}}*/
 
-    private function _writeData(array $datas)
+    /**
+     * write Data to file 
+     * 
+     * @param array $datas 
+     * @access private
+     * @return void
+     */
+    private function _writeData()
     {/*{{{*/
-        $this->datas = $datas;
 
         if(false == is_dir($this->dataDir))
         {
@@ -67,16 +75,70 @@ class Pcc
         error_log(serialize($this),3,$this->dataDir.'/'.$pccFile);
     }/*}}}*/
 
+    /**
+     * choice File 
+     * 
+     * @param array $datas 
+     * @access private
+     * @return void
+     */
+    private function _choiceFile($datas)
+    {/*{{{*/
+        if(false == is_array($datas))
+        {
+            return array();
+        }
+
+        $ret = array();
+        foreach($datas as $key => $items)
+        {
+            $fileName = basename($key);
+            if(false == empty($this->needFiles) && is_array($this->needFiles))
+            {
+                if(in_array(strtolower($fileName),$this->needFiles))
+                {
+                    $ret[$key] = $items;
+                    unset($datas[$key]);
+                }
+                continue;
+            }
+
+            $ret[$key] = $items;
+            unset($datas[$key]);
+        }
+        return $ret; 
+    }/*}}}*/
+
+    /**
+     * add your need files 
+     * 
+     * @param array $files 
+     * @access public
+     * @return void
+     */
     public function addNeedFiles(array $files)
-    {
-       $this->needFiles = array_unique(array_merge($this->needFiles,$files)); 
-    }
+    {/*{{{*/
+       $this->needFiles = array_map('strtolower',array_unique(array_merge($this->needFiles,$files))); 
+    }/*}}}*/
 
+    /**
+     * add Need Dirs  
+     * 
+     * @param array $dirs 
+     * @access public
+     * @return void
+     */
     public function addNeedDirs(array $dirs)
-    {
-       $this->needDirs = array_unique(array_merge($this->needDirs,$dirs)); 
-    }
+    {/*{{{*/
+       $this->needDirs = array_map('strtolower',array_unique(array_merge($this->needDirs,$dirs))); 
+    }/*}}}*/
 
+    /**
+     * microtime to Float 
+     * 
+     * @access private
+     * @return void
+     */
     private function _microtimeFloat()
     {/*{{{*/
         list($usec, $sec) = explode(" ", microtime());
