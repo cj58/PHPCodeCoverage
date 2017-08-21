@@ -57,7 +57,7 @@ class Pcc
 
         if($this->isAllMode)
         {
-           $this->addDatas($this->_getAllModeData()); 
+            $this->_mergeAllModeData();
         }
 
         $this->_writeData();
@@ -97,26 +97,47 @@ class Pcc
         }
     }/*}}}*/
 
-    private function _getAllModeData()
+    /**
+     * merge 
+     * 
+     * @param Pcc $pcc 
+     * @access public
+     * @return void
+     */
+    public function merge(Pcc $pcc)
+    {/*{{{*/
+        $this->startTime = min($this->startTime,$pcc->startTime);
+        $this->endTime = max($this->endTime,$pcc->endTime);
+        $this->consumeTime = $this->endTime - $this->startTime;
+        $this->addDatas($pcc->datas); 
+    }/*}}}*/
+
+    /**
+     * mergeAllModeData 
+     * 
+     * @access private
+     * @return void
+     */
+    private function _mergeAllModeData()
     {/*{{{*/
         $pccFile = $this->dataDir.'/'.$this->project.'.'.'All'.'.pcc'; 
         if(false == file_exists($pccFile))
         { 
-            return array();
+            return;
         }
         $fp = fopen($pccFile,"r"); 
         if(!$fp)
         {
-            return array();
+            return;
         }
         $str = fread($fp,filesize($pccFile));
         fclose($fp);
         $pcc =  unserialize($str);
         if(false == $pcc instanceof Pcc)
         {
-            return array();
+            return;
         }
-        return $pcc->datas;
+        $this->merge($pcc);
     }/*}}}*/
 
     /**
