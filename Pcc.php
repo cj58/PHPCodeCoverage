@@ -14,6 +14,7 @@ class Pcc
     public $endTime;
     public $consumeTime;
     public $dataDir;
+    public $isAllMode = false;
     public $needFiles = array();
     public $needDirs = array();
     public $filterFiles = array();
@@ -51,10 +52,71 @@ class Pcc
         $this->consumeTime = $this->endTime - $this->startTime;
         $datas = xdebug_get_code_coverage();
         xdebug_stop_code_coverage();
+        
+        $this->addDatas($this->_choiceDatas($datas));
 
-        $this->datas = $this->_choiceDatas($datas);
+        if($this->isAllMode)
+        {
+           $this->addDatas($this->_getAllModeData()); 
+        }
 
         $this->_writeData();
+    }/*}}}*/
+
+    /**
+     * addDatas 
+     * 
+     * @param array $addDatas 
+     * @access public
+     * @return void
+     */
+    public function addDatas(array $addDatas)
+    {/*{{{*/
+        if(empty($addDatas))
+        {
+            return;    
+        }
+
+        if(empty($this->datas))
+        {
+            $this->datas = $addDatas;    
+        }
+
+
+        $keys = array_unique(array_merge(array_keys($this->datas),array_keys($addDatas)));
+        foreach($keys as $key)
+        {
+            if(isset($this->datas[$key]) && isset($addDatas[$key]))    
+            {
+                $this->datas[$key] = $this->datas[$key] + $addDatas[$key];    
+            }
+            else if(isset($addDatas[$key]))
+            {
+                $this->datas[$key] = $addDatas[$key];    
+            }
+        }
+    }/*}}}*/
+
+    private function _getAllModeData()
+    {/*{{{*/
+        $pccFile = $this->dataDir.'/'.$this->project.'.'.'All'.'.pcc'; 
+        if(false == file_exists($pccFile))
+        { 
+            return array();
+        }
+        $fp = fopen($pccFile,"r"); 
+        if(!$fp)
+        {
+            return array();
+        }
+        $str = fread($fp,filesize($pccFile));
+        fclose($fp);
+        $pcc =  unserialize($str);
+        if(false == $pcc instanceof Pcc)
+        {
+            return array();
+        }
+        return $pcc->datas;
     }/*}}}*/
 
     /**
@@ -73,7 +135,12 @@ class Pcc
         }
 
         $key = md5($this->project.$this->startTime.$this->endTime.$this->consumeTime);
+        $key = $this->isAllMode ? 'All' : $key;
         $pccFile = $this->project.'.'.$key.'.pcc'; 
+        if($this->isAllMode && file_exists($this->dataDir.'/'.$pccFile))
+        {
+            unlink($this->dataDir.'/'.$pccFile);    
+        }
         error_log(serialize($this),3,$this->dataDir.'/'.$pccFile);
     }/*}}}*/
 
@@ -215,6 +282,17 @@ class Pcc
     {/*{{{*/
         list($usec, $sec) = explode(" ", microtime());
         return ((float)$usec + (float)$sec);
+    }/*}}}*/
+
+    /**
+     * set all Mode 
+     * 
+     * @access public
+     * @return void
+     */
+    public function setAllMode()
+    {/*{{{*/
+        $this->isAllMode = true;    
     }/*}}}*/
     
 }/*}}}*/
