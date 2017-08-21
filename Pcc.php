@@ -50,7 +50,7 @@ class Pcc
         $datas = xdebug_get_code_coverage();
         xdebug_stop_code_coverage();
 
-        $this->datas = $this->_choiceFile($datas);
+        $this->datas = $this->_choiceDatas($datas);
 
         $this->_writeData();
     }/*}}}*/
@@ -76,13 +76,13 @@ class Pcc
     }/*}}}*/
 
     /**
-     * choice File 
+     * choice data 
      * 
      * @param array $datas 
      * @access private
      * @return void
      */
-    private function _choiceFile($datas)
+    private function _choiceDatas($datas)
     {/*{{{*/
         if(false == is_array($datas))
         {
@@ -90,21 +90,40 @@ class Pcc
         }
 
         $ret = array();
-        foreach($datas as $key => $items)
+        foreach($datas as $filePath => $items)
         {
-            $fileName = basename($key);
+            $fileName = basename($filePath);
             if(false == empty($this->needFiles) && is_array($this->needFiles))
             {
                 if(in_array(strtolower($fileName),$this->needFiles))
                 {
-                    $ret[$key] = $items;
-                    unset($datas[$key]);
+                    $ret[$filePath] = $items;
+                    unset($datas[$filePath]);
                 }
                 continue;
             }
 
-            $ret[$key] = $items;
-            unset($datas[$key]);
+            if(false == empty($this->needDirs) && is_array($this->needDirs))
+            {
+                $found = 0;
+                foreach($this->needDirs as $needDir)
+                {
+                    if(0 === stripos(strtolower($filePath),$needDir))    
+                    {
+                        $found = 1;
+                        break;
+                    }
+                }
+                if($found)
+                {
+                    $ret[$filePath] = $items;
+                    unset($datas[$filePath]);
+                }
+                continue;
+            }
+
+            $ret[$filePath] = $items;
+            unset($datas[$filePath]);
         }
         return $ret; 
     }/*}}}*/
