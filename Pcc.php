@@ -16,6 +16,8 @@ class Pcc
     public $dataDir;
     public $needFiles = array();
     public $needDirs = array();
+    public $filterFiles = array();
+    public $filterDirs = array();
     public $datas = array();
 
     public function __construct($project)
@@ -122,6 +124,33 @@ class Pcc
                 continue;
             }
 
+            if(false == empty($this->filterFiles) && is_array($this->filterFiles))
+            {
+                if(in_array(strtolower($fileName),$this->filterFiles))
+                {
+                    unset($datas[$filePath]);
+                    continue;
+                }
+            }
+
+            if(false == empty($this->filterDirs) && is_array($this->filterDirs))
+            {
+                $found = 0;
+                foreach($this->filterDirs as $needDir)
+                {
+                    if(0 === stripos(strtolower($filePath),$needDir))    
+                    {
+                        $found = 1;
+                        break;
+                    }
+                }
+                if($found)
+                {
+                    unset($datas[$filePath]);
+                    continue;
+                }
+            }
+
             $ret[$filePath] = $items;
             unset($datas[$filePath]);
         }
@@ -150,6 +179,30 @@ class Pcc
     public function addNeedDirs(array $dirs)
     {/*{{{*/
        $this->needDirs = array_map('strtolower',array_unique(array_merge($this->needDirs,$dirs))); 
+    }/*}}}*/
+
+    /**
+     * add your Filter files 
+     * 
+     * @param array $files 
+     * @access public
+     * @return void
+     */
+    public function addFilterFiles(array $files)
+    {/*{{{*/
+       $this->filterFiles = array_map('strtolower',array_unique(array_merge($this->filterFiles,$files))); 
+    }/*}}}*/
+
+    /**
+     * add Filter Dirs  
+     * 
+     * @param array $dirs 
+     * @access public
+     * @return void
+     */
+    public function addFilterDirs(array $dirs)
+    {/*{{{*/
+       $this->filterDirs = array_map('strtolower',array_unique(array_merge($this->filterDirs,$dirs))); 
     }/*}}}*/
 
     /**
