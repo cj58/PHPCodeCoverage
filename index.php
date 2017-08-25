@@ -55,6 +55,8 @@ class IndexController
         $reqeust['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         $reqeust['pccFile'] = isset($_REQUEST['pccFile']) ? $_REQUEST['pccFile'] : '';
         $reqeust['phpFile'] = isset($_REQUEST['phpFile']) ? $_REQUEST['phpFile'] : '';
+        $reqeust['findPath'] = isset($_REQUEST['findPath']) ? $_REQUEST['findPath'] : '';
+        $reqeust['isExpand'] = isset($_REQUEST['isExpand']) ? $_REQUEST['isExpand'] : '';
 
         $options = getopt('a:c:p:', array("action:", "pccFile:","phpFile:"));
 
@@ -198,8 +200,13 @@ class IndexController
         }
         $res['data']['pcc'] = $ret['data']['pcc'];
         $res['data']['pccFile'] = $reqeust['pccFile'];
+        $res['data']['title'] = $reqeust['pccFile'];
+        $res['data']['findPath'] = $reqeust['findPath'];
+        $res['data']['isExpand'] = $reqeust['isExpand'];
+        $res['data']['action'] = $reqeust['action'];
         return $res;
     }/*}}}*/
+
 
     /**
      * get a pcc object from a file 
@@ -239,6 +246,104 @@ class IndexController
     }/*}}}*/
 
     /**
+     * infoWebViewComm 
+     * 
+     * @param mixed $response 
+     * @access private
+     * @return void
+     */
+    private function _infoWebViewComm($response)
+    {/*{{{*/
+        if(self::RESPONSE_OK != $response['errorMsg'])
+        {
+            return;
+        }
+        $data = $response['data'];
+        if(false == is_array($data))
+        {
+            return;    
+        }
+        $pccFile = $data['pccFile'];
+        $pcc = $data['pcc'];
+
+        $title = $data['title'];
+
+        echo '<html>
+                <head>
+                  <title>'.$title.'</title>
+                   <meta http-equiv=Content-Type content="text/html;charset=gb2312">
+                   <meta name="renderer" content="webkit">
+                </head>
+                <body>';
+        
+        echo "<table align='center'>";
+        echo "<tr><td align='right'>Project : </td><td>{$pcc->project}</td>";
+        $startTime = $this->_microtimeFormat($pcc->startTime);
+        echo "<tr><td align='right'>StartTime : </td><td>{$startTime}</td>";
+        $endTime = $this->_microtimeFormat($pcc->endTime);
+        echo "<tr><td align='right'>EndTime : </td><td>{$endTime}</td>";
+        $consumeTime = number_format($pcc->consumeTime, 6, '.', '');
+        echo "<tr><td align='right'>ConsumeTime : </td><td>{$consumeTime}</td>";
+        echo "</table>";
+        echo "<hr>";
+      
+        $findPath = $data['findPath'];
+        echo '<font>'; 
+        if('dataInfo' == $data['action'])
+        {
+            $newIsExpand = $data['isExpand'] ? 0 : 1;
+            $btn = $newIsExpand ? '+Expand' : '-Folded';
+            echo '[<a href=index.php?action=dataInfo&pccFile='.$pccFile.'&findPath='.$findPath
+                 .'&isExpand='.$newIsExpand.'>'.$btn.'</a>]&nbsp&nbsp';
+        }
+        if(false == empty($findPath))
+        {
+           $tmpPos = 0;
+           $k = 0;
+           while(1)
+           {
+               $pos = strpos($findPath,DIRECTORY_SEPARATOR,$tmpPos);
+               if(false === $pos)
+               {
+                   $tmpFindPath = $findPath;
+                   $display = substr($findPath,$tmpPos);
+                   if($findPath == $tmpFindPath)
+                   {
+                        echo $display;
+                   }
+                   else
+                   {
+                       $html = '<a href=index.php?action=fileInfo&pccFile='.$pccFile.'&findPath=';
+                       $html .= $pccFile.'&phpFile=';
+                       $html .= $tmpFindPath.'>'.$display.'</a>';
+                       echo $html;
+                   }
+                   break;
+               }
+               else
+               {
+
+                   $display = substr($findPath,$tmpPos,$pos - $tmpPos + strlen(DIRECTORY_SEPARATOR));
+                   $tmpPos = $pos + strlen(DIRECTORY_SEPARATOR);
+                   $tmpFindPath = substr($findPath,0,$tmpPos);
+
+                   if($findPath == $tmpFindPath)
+                   {
+                        echo $display;
+                   }
+                   else
+                   {
+                       $html = '<a href=index.php?action=dataInfo&pccFile='.$pccFile.'&findPath=';
+                       $html .= $tmpFindPath.'>'.$display.'</a>&nbsp';
+                       echo $html;
+                   }
+               }
+           }
+        }
+        echo "</font>";
+    }/*}}}*/
+
+    /**
      * dataInfo WebView 
      * 
      * @param mixed $response 
@@ -256,35 +361,96 @@ class IndexController
         {
             return;    
         }
-        $pcc = $data['pcc'];
+        $this->_infoWebViewComm($response);
+
         $pccFile = $data['pccFile'];
+        $pcc = $data['pcc'];
+        $findPath = $data['findPath'];
         $rows = $pcc->datas;
 
-        $title = $pccFile;
-        echo "<html><head><title>{$title}</title></head><body>";
-        
-        echo "<table align='center'>";
-        echo "<tr><td align='right'>Project : </td><td>{$pcc->project}</td>";
-        $startTime = $this->_microtimeFormat($pcc->startTime);
-        echo "<tr><td align='right'>StartTime : </td><td>{$startTime}</td>";
-        $endTime = $this->_microtimeFormat($pcc->endTime);
-        echo "<tr><td align='right'>EndTime : </td><td>{$endTime}</td>";
-        $consumeTime = number_format($pcc->consumeTime, 6, '.', '');
-        echo "<tr><td align='right'>ConsumeTime : </td><td>{$consumeTime}</td>";
-        echo "</table>";
-        echo "<hr>";
         echo "<ul>";
-        foreach($rows as $key => $row)
+        if($data['isExpand'])
         {
-            $count = count($row);
-            $html = '<a href=index.php?action=fileInfo&pccFile='.$pccFile.'&phpFile=';
-            $html .= $key.'>'.$key.'</a>';
-            $html .= " ${count}<br/>";
-            echo "<li>".$html."</li>";
+            foreach($rows as $file => $item)
+            {
+                if(false == empty($findPath) && false === strpos($file,$findPath))
+                {
+                    continue;
+                }
+                $html = '<a href=index.php?action=fileInfo&pccFile='.$pccFile.'&findPath=';
+                $html .= $file.'&phpFile=';
+                $html .= $file.'>'.substr($file,strlen($findPath)).'</a>&nbsp&nbsp'.count($item);
+                echo "<li>".$html."</li>";
+            }
+        }
+        else
+        {
+            $out = $this->_scanDirList(array_keys($rows),$findPath); 
+            foreach($out as $key => $type)
+            {
+                if('file' == $type)
+                {
+                    $tmpPHPFile = $findPath.$key;
+                    $count = isset($rows[$tmpPHPFile]) ? count($rows[$tmpPHPFile]) : 0;
+                    $html = '<a href=index.php?action=fileInfo&pccFile='.$pccFile.'&findPath=';
+                    $html .= $findPath.$key.'&phpFile=';
+                    $html .= $tmpPHPFile.'>'.$key.'</a>&nbsp&nbsp'.$count;
+                }
+                else
+                {
+                    $html = '<a href=index.php?action=dataInfo&pccFile='.$pccFile.'&findPath=';
+                    $html .= $findPath.$key.'>'.$key.'</a>';
+                }
+                echo "<li>".$html."</li>";
+            }
         }
         echo "</ul>";
         echo '</body></html>';
     }/*}}}*/
+
+    private function _scanDirList(array $files,$findPath = '')
+    {/*{{{*/
+       $out = array();
+       foreach($files as $file)
+       {
+           if(empty($findPath))
+           {
+               $pos = strpos($file,DIRECTORY_SEPARATOR);     
+               if(0 === $pos)
+               {
+                   $out[DIRECTORY_SEPARATOR] = 'dir';    
+               }
+               else
+               {
+                   $key = substr($file,0,$pos);     
+                   $out[$key.DIRECTORY_SEPARATOR] = 'dir';
+               }
+           }
+           else
+           {
+               $pos = strpos($file,$findPath);     
+               if(0 !== $pos)
+               {
+                   continue;
+               }
+               $file = substr($file,strlen($findPath));                  
+               $pos = strpos($file,DIRECTORY_SEPARATOR);     
+               if(false !== $pos)
+               {
+                   $key = substr($file,0,$pos);
+                   $out[$key.DIRECTORY_SEPARATOR] = 'dir';
+               }
+               else
+               {
+                   $out[$file] = 'file';
+               }
+           }
+       }
+       return $out;
+    }/*}}}*/
+
+
+
 
     /**
      * dataInfo CliView 
@@ -383,7 +549,13 @@ class IndexController
         }
         fclose($fp);
         $res['data']['lines'] = $lines;
+        $res['data']['pcc'] = $pcc;
+        $res['data']['pccFile'] = $reqeust['pccFile'];
         $res['data']['phpFile'] = $phpFile;
+        $res['data']['title'] = basename($phpFile);
+        $res['data']['findPath'] = $reqeust['findPath'];
+        $res['data']['isExpand'] = $reqeust['isExpand'];
+        $res['data']['action'] = $reqeust['action'];
         return $res;
     }/*}}}*/
 
@@ -406,17 +578,14 @@ class IndexController
             return;    
         }
 
-        $title = basename($response['data']['phpFile']);
-        echo '<html>
-                <head>
-                  <title>'.$title.'</title>
-                   <meta http-equiv=Content-Type content="text/html;charset=gb2312">
-                   <meta name="renderer" content="webkit">
-                   <link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">  
-                   <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
-                   <script >hljs.initHighlightingOnLoad();</script>
-                </head>
-                <body>';
+        $this->_infoWebViewComm($response);
+
+        //$title = basename($response['data']['phpFile']);
+
+        echo   '<link href="http://cdn.bootcss.com/highlight.js/8.0/styles/monokai_sublime.min.css" rel="stylesheet">  
+                <script src="http://cdn.bootcss.com/highlight.js/8.0/highlight.min.js"></script>  
+                <script >hljs.initHighlightingOnLoad();</script>';
+                
         echo ' <pre>
                         <code class="php">';
         $rowNumLen = strlen(count($lines));
