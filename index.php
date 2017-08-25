@@ -476,13 +476,14 @@ class IndexController
 
         $title = $pccFile;
 
-        echo "project:{$pcc->project}\n";
+        echo "    Project: {$pcc->project}\n";
         $startTime = $this->_microtimeFormat($pcc->startTime);
-        echo "startTime:{$startTime}\n";
+        echo "  StartTime: {$startTime}\n";
         $endTime = $this->_microtimeFormat($pcc->endTime);
-        echo "endTime:{$endTime}\n";
+        echo "    EndTime: {$endTime}\n";
         $consumeTime = number_format($pcc->consumeTime, 6, '.', '');
-        echo "consumeTime:{$consumeTime}\n";
+        echo "ConsumeTime: {$consumeTime}\n";
+        echo "-----------------------------------------------------";
         echo "\n";
 
         foreach($rows as $key => $row)
@@ -633,7 +634,15 @@ class IndexController
         {
             $str = $line['line'];
             $isCoverageStr = $line['isCoverage'] ? '+' : ' ';
-            echo sprintf("%{$rowNumLen}d%s%s",$line['rowNum'],$isCoverageStr,$str);
+            if($line['isCoverage'])
+            {
+                echo sprintf("\033[1;32;40m%{$rowNumLen}d%s%s\033[0m",$line['rowNum'],$isCoverageStr,$str);
+            }
+            else
+            {
+                echo sprintf("%{$rowNumLen}d%s%s",$line['rowNum'],$isCoverageStr,$str);
+            }
+
         }
     }/*}}}*/
 
