@@ -1,5 +1,5 @@
 # 1 功能介绍
-PHPCodeCoverage是一个基于xdebug检测php代码覆盖的工具，它能够应用于功能测试，接口测试，单元测试等任何php代码环境。它能够通过Web页面和Cli终端两种途经展示代码覆盖的结果。
+PHPCodeCoverage是一个基于xdebug检测php代码覆盖的工具，它能够应用于功能测试，接口测试，单元测试等任何php代码环境，同时当程序出现异常时，它能够快速的追踪到代码的出错点。它能够通过Web页面和Cli终端两种途经展示代码覆盖的结果。
 # 2 安装
 ## 2.1 安装xdebug
 ### 2.1.1 检测出php模块是否包含xdebug
@@ -89,27 +89,34 @@ $configs = array();
 $configs['dataDir'] = dirname(__FILE__).'/data';
 ```
 # 4 使用
+只需要三行代码，第一行引入Pcc类文件；第二行创建一个Pcc对象，参数是项目的名称；第三行运行Pcc代码。
 vim test.php
 ```php
 <?php
 include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
 $p = new Pcc('testProject');
-$p->start();
+$p->run();
 
 //..... you want Coverage Code,start
-$a = 1;
-if($a)
+function testInterface($testCase)
 {
-    $out = 'a = 1';
+    switch($testCase)
+    {
+        case '1':
+            $out = '$testCase = 1';
+            break;
+        case '2':
+            $out = '$testCase = 2';
+            break;
+        default:
+            $out = '$testCase <> 1 && $testCase <> 2';
+            break;
+
+    }
 }
-else
-{
-    $out = 'a <> 1';
-}
+testInterface(1);
 //....you want Coverage Code,end
 //....
-
-$p->stop();
 
 ?>
 ```
@@ -172,9 +179,10 @@ vim /Data/apps/nginx/conf/nginx-web.conf
 ![web_data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_data_list.png)
 
 ### 5.2.3 查看pcc数据详情
-点击某一个.pcc文件，即可查看详情。
+点击某一个.pcc文件，即可查看详情。当点击+Expand时候，会展开当前目录下所有覆盖的php文件；点击-Folded后，会进入目录检索模式。
 ![web_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo.png)
+![web_pcc_datainfo2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo2.png)
 
 ### 5.1.3 查看php文件代码覆盖情况
-点击某一个.php文件，即可查看代码覆盖情况。背景行是绿色的表示被覆盖。
+点击某一个.php文件，即可查看代码覆盖情况。背景行是绿色的表示被覆盖。由于使用了highlight.js来高亮php代码，为了浏览器的兼容性。推荐使用谷歌，火狐，360极速模式（webkit）等浏览器。
 ![web_php_info](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_php_info.png)
