@@ -141,7 +141,7 @@ $ php index.php -a dataInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc
 ![cli_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/cli_pcc_datainfo.png)
 
 ### 5.1.3 查看php文件代码覆盖情况
-执行如下命令。-p 表示要查看代码覆盖情况的php文件。行号后面带有+表示，该行代码被覆盖。
+执行如下命令。-p 表示要查看代码覆盖情况的php文件。行号后面带有+表示，以及字体是绿色，表示该行代码被覆盖。
 ```
  $ php index.php -a fileInfo -c testProject.af93270fdce10782281d7a0f4b77548c.pcc -p /home/dev/svn/avatar/PHPCodeCoverage/test.php
 ```
