@@ -170,11 +170,13 @@ class Pcc
         $key = md5($this->project.$this->startTime.$this->endTime.$this->consumeTime);
         $key = $this->isAllMode ? 'All' : $key;
         $pccFile = $this->project.'.'.$key.'.pcc'; 
-        if($this->isAllMode && file_exists($this->dataDir.'/'.$pccFile))
+        $fp = fopen($this->dataDir.'/'.$pccFile, "w");
+        if(!$fp)
         {
-            unlink($this->dataDir.'/'.$pccFile);    
+            return;
         }
-        error_log(serialize($this),3,$this->dataDir.'/'.$pccFile);
+        fwrite($fp,serialize($this));
+        fclose($fp);
     }/*}}}*/
 
     /**

@@ -18,9 +18,18 @@ class IndexController
         $this->dataDir = $configs['dataDir'];
     }/*}}}*/
 
+    /**
+     * run 
+     * 
+     * @access public
+     * @return void
+     */
     public function run() 
     {/*{{{*/
-        $reqeust = $this->getReqeust();
+        $env = 'cli' == php_sapi_name() ? 'Cli' : 'Web';
+        $getReqeustMethod = 'getReqeust'.$env;
+        $reqeust = $this->$getReqeustMethod();
+
         $action = $reqeust['action'];
         $action = $action ? $action : 'index';
         $modelMethod = $action.'Model';
@@ -36,42 +45,49 @@ class IndexController
             echo "ERROR,".$response['errorMsg'];
             return;
         }
-        $env = $reqeust['env'];
+
         $viewMethod = $action.$env.'View';
         $this->$viewMethod($response);
 
     }/*}}}*/
 
     /**
-     * Reqeust param 
+     * Reqeust param form Web 
      * 
      * @access public
      * @return void
      */
-    public function getReqeust()
+    public function getReqeustWeb()
     {/*{{{*/
         $reqeust = array();
-        $reqeust['env'] = 'cli' == php_sapi_name() ? 'Cli' : 'Web';
         $reqeust['action'] = isset($_REQUEST['action']) ? $_REQUEST['action'] : '';
         $reqeust['pccFile'] = isset($_REQUEST['pccFile']) ? $_REQUEST['pccFile'] : '';
         $reqeust['phpFile'] = isset($_REQUEST['phpFile']) ? $_REQUEST['phpFile'] : '';
         $reqeust['findPath'] = isset($_REQUEST['findPath']) ? $_REQUEST['findPath'] : '';
         $reqeust['isExpand'] = isset($_REQUEST['isExpand']) ? $_REQUEST['isExpand'] : '';
+        return $reqeust;
+    }/*}}}*/
 
+    /**
+     * Reqeust param form Cli 
+     * 
+     * @access public
+     * @return void
+     */
+    public function getReqeustCli()
+    {/*{{{*/
+        $reqeust = array();
         $options = getopt('a:c:p:', array("action:", "pccFile:","phpFile:"));
-
-        $reqeust['action'] = empty($reqeust['action']) && isset($options['a']) 
-            ? $options['a']: $reqeust['action'];
-        $reqeust['action'] = empty($reqeust['action']) && isset($options['action']) 
-            ? $options['action']: $reqeust['action'];
+        $reqeust['action'] = isset($options['a']) ? $options['a']: 'index';
+        $reqeust['action'] = isset($options['action']) ? $options['action']: $reqeust['action'];
 
         $reqeust['pccFile'] = empty($reqeust['pccFile']) && isset($options['c']) 
-            ? $options['c']: $reqeust['pccFile'];
+            ? $options['c']: '';
         $reqeust['pccFile'] = empty($reqeust['pccFile']) && isset($options['pccFile']) 
             ? $options['pccFile']: $reqeust['pccFile'];
 
         $reqeust['phpFile'] = empty($reqeust['phpFile']) && isset($options['p']) 
-            ? $options['p']: $reqeust['phpFile'];
+            ? $options['p']: '';
         $reqeust['phpFile'] = empty($reqeust['phpFile']) && isset($options['phpFile']) 
             ? $options['phpFile']: $reqeust['phpFile'];
         return $reqeust;
@@ -201,8 +217,8 @@ class IndexController
         $res['data']['pcc'] = $ret['data']['pcc'];
         $res['data']['pccFile'] = $reqeust['pccFile'];
         $res['data']['title'] = $reqeust['pccFile'];
-        $res['data']['findPath'] = $reqeust['findPath'];
-        $res['data']['isExpand'] = $reqeust['isExpand'];
+        $res['data']['findPath'] = isset($reqeust['findPath']) ? $reqeust['findPath'] : '';
+        $res['data']['isExpand'] = isset($reqeust['isExpand']) ? $reqeust['isExpand'] : 0;
         $res['data']['action'] = $reqeust['action'];
         return $res;
     }/*}}}*/
@@ -450,8 +466,6 @@ class IndexController
     }/*}}}*/
 
 
-
-
     /**
      * dataInfo CliView 
      * 
@@ -488,7 +502,6 @@ class IndexController
 
         foreach($rows as $key => $row)
         {
-
             $count = count($row);
             echo $key.' '.$count."\n";
         }
@@ -554,8 +567,8 @@ class IndexController
         $res['data']['pccFile'] = $reqeust['pccFile'];
         $res['data']['phpFile'] = $phpFile;
         $res['data']['title'] = basename($phpFile);
-        $res['data']['findPath'] = $reqeust['findPath'];
-        $res['data']['isExpand'] = $reqeust['isExpand'];
+        $res['data']['findPath'] = isset($reqeust['findPath']) ? $reqeust['findPath'] : '';
+        $res['data']['isExpand'] = isset($reqeust['isExpand']) ? $reqeust['findPath'] : '';
         $res['data']['action'] = $reqeust['action'];
         return $res;
     }/*}}}*/
@@ -628,7 +641,6 @@ class IndexController
             return;    
         }
 
-
         $rowNumLen = strlen(count($lines));
         foreach($lines as $line)
         {
@@ -642,7 +654,6 @@ class IndexController
             {
                 echo sprintf("%{$rowNumLen}d%s%s",$line['rowNum'],$isCoverageStr,$str);
             }
-
         }
     }/*}}}*/
 
@@ -670,7 +681,7 @@ class IndexController
      */
     public function helpWebView($reqeust)
     {/*{{{*/
-        echo "https://github.com/cj58/PHPCodeCoverage";
+        echo "Project Help£ºhttps://github.com/cj58/PHPCodeCoverage";
     }/*}}}*/
 
     /**
