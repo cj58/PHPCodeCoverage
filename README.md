@@ -179,8 +179,10 @@ vim /Data/apps/nginx/conf/nginx-web.conf
 ![web_data_list](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_data_list.png)
 
 ### 5.2.3 查看pcc数据详情
-点击某一个.pcc文件，即可查看详情。当点击+Expand时候，会展开当前目录下所有覆盖的php文件；点击-Folded后，会进入目录检索模式。
+点击某一个.pcc文件，即可查看详情。当点击+Expand时候，会展开当前目录下所有覆盖的php文件；点击-Folded后，会进入目录检索模式。<br/>
+点击+Expand效果：
 ![web_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo.png)
+点击-Folded效果：
 ![web_pcc_datainfo2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo2.png)
 
 ### 5.1.3 查看php文件代码覆盖情况
@@ -282,5 +284,6 @@ testInterface(1);
 
 ```
 ![web_testerror_1](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_1.png)
-----
+
+如下图，可以看到$a = 1;没有被覆盖。
 ![web_testerror_2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_2.png)
