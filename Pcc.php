@@ -29,6 +29,18 @@ class Pcc
     }/*}}}*/
 
     /**
+     * run 
+     * 
+     * @access public
+     * @return void
+     */
+    public function run()
+    {/*{{{*/
+        $this->start();
+        register_shutdown_function(array($this, 'stop'));
+    }/*}}}*/
+
+    /**
      * start 
      * 
      * @access public
