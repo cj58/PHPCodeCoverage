@@ -1,5 +1,5 @@
 # 1 功能介绍
-PHPCodeCoverage(PCC)是一个基于xdebug检测php代码覆盖的工具，它能够应用于功能测试，接口测试，单元测试等任何php代码环境，同时当程序出现异常时，它能够快速的追踪到代码的出错点。它能够通过Web页面和Cli终端两种途经展示代码覆盖的结果。
+PHPCodeCoverage(PCC)是一个基于xdebug检测php代码覆盖的工具，它能够应用于功能测试，接口测试，单元测试等任何php代码环境，同时当程序出现异常时，它能够快速的追踪到代码的出错点。它能够通过Web页面和Cli终端两种途经展示代码覆盖的结果。PCC开源项目位置：https://github.com/cj58/PHPCodeCoverage。
 # 2 安装
 ## 2.1 安装xdebug
 ### 2.1.1 检测出php模块是否包含xdebug
@@ -127,7 +127,7 @@ testInterface(1);
 # 5 展示
 ## 5.1 命令行展示
 ### 5.1.1 查看pcc数据列表
-执行如下命令，会安装时间倒序展示data目录中的所有.pcc文件。
+执行如下命令，会按照时间倒序展示data目录中的所有.pcc文件。
 ```
 $ php index.php
 ```
@@ -180,9 +180,10 @@ vim /Data/apps/nginx/conf/nginx-web.conf
 
 ### 5.2.3 查看pcc数据详情
 点击某一个.pcc文件，即可查看详情。当点击+Expand时候，会展开当前目录下所有覆盖的php文件；点击-Folded后，会进入目录检索模式。<br/>
-点击+Expand效果：
+点击+Expand效果如下图：
 ![web_pcc_datainfo](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo.png)
-点击-Folded效果：
+<br/>
+点击-Folded效果如下图：
 ![web_pcc_datainfo2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_pcc_datainfo2.png)
 
 ### 5.1.3 查看php文件代码覆盖情况
@@ -230,7 +231,7 @@ vim /Data/apps/nginx/conf/nginx-web.conf
  //....your code that you want be Coverage
 ```
 ## 6.5 setAllMode
-这个模式下，一个项目只会生成一个.pcc文件（testProject.All.pcc）。每次都会合并上一次的testProject.All.pcc代码覆盖情况。这种模式，可以很方便的创建多天用例，来检测对某段多分支的代码的覆盖情况。
+这个模式下，一个项目只会生成一个.pcc文件（testProject.All.pcc）。每次都会合并上一次的testProject.All.pcc代码覆盖情况。这种模式，可以很方便的创建多条用例，来检测对某段多分支的代码的覆盖情况。
 ```php
  <?php
  include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
@@ -250,7 +251,7 @@ $s = $m->isNull();
 $a = 1;
 ?>
 ```
-vim test.php
+vim test.php 去include_once('testError.php');
 ```php
 <?php
 include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
@@ -283,7 +284,8 @@ testInterface(1);
 ?>
 
 ```
+test.php的代码覆盖情况。include_once('testError.php');这一行卡住。
 ![web_testerror_1](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_1.png)
-
-如下图，可以看到$a = 1;没有被覆盖。
+<br/>
+testError.php覆盖情况如下图，$s = $m->isNull()这一行卡住。可以看到$a = 1;没有被覆盖。
 ![web_testerror_2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_2.png)
