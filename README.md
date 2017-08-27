@@ -89,7 +89,7 @@ $configs = array();
 $configs['dataDir'] = dirname(__FILE__).'/data';
 ```
 # 4 使用
-只需要三行代码，第一行引入Pcc类文件；第二行创建一个Pcc对象，参数是项目的名称；第三行运行Pcc代码。
+只需要三行代码，第一行引入Pcc类文件；第二行创建一个Pcc对象，参数是项目的名称；第三行运行Pcc代码。<br/>
 vim test.php
 ```php
 <?php
@@ -186,3 +186,101 @@ vim /Data/apps/nginx/conf/nginx-web.conf
 ### 5.1.3 查看php文件代码覆盖情况
 点击某一个.php文件，即可查看代码覆盖情况。背景行是绿色的表示被覆盖。由于使用了highlight.js来高亮php代码，为了浏览器的兼容性。推荐使用谷歌，火狐，360极速模式（webkit）等浏览器。
 ![web_php_info](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_php_info.png)
+# 6 高级用法
+## 6.1 addNeedFiles 
+添加只需要查看的文件。.pcc文件中只会保存你期望的php文件代码覆盖信息。代码如下
+```php
+ <?php
+ include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+ $p = new Pcc('testProject');
+ $p->addNeedFiles(array('test.php'));
+ $p->run();
+ //....your code that you want be Coverage
+```
+## 6.2 addNeedDirs
+添加你需要的目录文件。.pcc文件中只会保留你期望目录的php代码覆盖信息。
+```php
+ <?php
+ include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+ $p = new Pcc('testProject');
+ $p->addNeedDirs(array('/home/dev/svn/avatar/PHPCodeCoverage/testDir'));
+ $p->run();
+ //....your code that you want be Coverage
+```
+## 6.3 addFilterFiles
+过滤掉某些文件。.pcc文件中将不在包含这些文件的代码覆盖信息。
+```php
+ <?php
+ include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+ $p = new Pcc('testProject');
+ $p->addFilterFiles(array('pcc.php'));
+ $p->run();
+ //....your code that you want be Coverage
+```
+## 6.4 addFilterDirs
+过滤掉某些目录统计信息。.pcc文件将不保存这个目录下面的代码覆盖信息。
+```php
+ <?php
+ include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+ $p = new Pcc('testProject');
+ $p->addFilterDirs(array('/home/dev/svn/avatar/PHPCodeCoverage/testDir'));
+ $p->run();
+ //....your code that you want be Coverage
+```
+## 6.5 setAllMode
+这个模式下，一个项目只会生成一个.pcc文件（testProject.All.pcc）。每次都会合并上一次的testProject.All.pcc代码覆盖情况。这种模式，可以很方便的创建多天用例，来检测对某段多分支的代码的覆盖情况。
+```php
+ <?php
+ include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+ $p = new Pcc('testProject');
+ $p->setAllMode();
+ $p->run();
+ //....your code that you want be Coverage
+```
+# 7 代码异常，如何追踪？
+新一个testError.php。这段代码会报错： Division by zero与 Call to a member function isNull()<br/>
+vim testError.php
+```php
+<?php
+$m = 1;
+$f = 1 / 0;
+$s = $m->isNull();
+$a = 1;
+?>
+```
+vim test.php
+```php
+<?php
+include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
+$p = new Pcc('testProject');
+$p->run();
+
+include_once('testError.php');
+
+//..... you want Coverage Code,start
+function testInterface($testCase)
+{
+    switch($testCase)
+    {
+        case '1':
+            $out = '$testCase = 1';
+            break;
+        case '2':
+            $out = '$testCase = 2';
+            break;
+        default:
+            $out = '$testCase <> 1 && $testCase <> 2';
+            break;
+
+    }
+}
+testInterface(1);
+//....you want Coverage Code,end
+//....
+
+?>
+
+```
+![web_testerror_1](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_1.png)
+----
+![web_testerror_2](https://github.com/cj58/img/blob/master/PHPCodeCoverage/web_testerror_2.png)
