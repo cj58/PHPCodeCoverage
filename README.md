@@ -87,6 +87,7 @@ $configs = array();
 //data dir for pcc
 //$configs['dataDir'] = '/tmp/pcc/data';
 $configs['dataDir'] = dirname(__FILE__).'/data';
+return $configs;
 ```
 # 4 使用
 只需要三行代码，第一行引入Pcc类文件；第二行创建一个Pcc对象，参数是项目的名称；第三行运行Pcc代码。<br/>
