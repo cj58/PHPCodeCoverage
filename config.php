@@ -13,3 +13,4 @@ $configs = array();
 //data dir for pcc
 //$configs['dataDir'] = '/tmp/pcc/data';
 $configs['dataDir'] = dirname(__FILE__).'/data';
+return $configs;
