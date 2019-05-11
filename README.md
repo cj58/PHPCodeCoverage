@@ -91,11 +91,11 @@ return $configs;
 ```
 # 4 使用
 只需要三行代码，第一行引入Pcc类文件；第二行创建一个Pcc对象，参数是项目的名称；第三行运行Pcc代码。<br/>
-vim test.php
+vim demo.php
 ```php
 <?php
 include_once("/home/dev/svn/avatar/PHPCodeCoverage/Pcc.php");
-$p = new Pcc('testProject');
+$p = new Pcc('demoProject');
 $p->run();
 
 //..... you want Coverage Code,start
